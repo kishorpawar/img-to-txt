@@ -1,8 +1,8 @@
 import os
 from flask import Flask, render_template, request
-from views import get_attendence
+from views import get_attendence, get_text_from_api
 
-MEDIA = '/static/media'
+MEDIA = '/static/media/'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 app = Flask(__name__)
@@ -27,7 +27,8 @@ def upload_page():
         if file and allowed_file(file.filename):
 
             # call the OCR function on it
-            extracted_text = get_attendence(file)
+            #extracted_text = get_attendence(file)
+            extracted_text = get_text_from_api(file)
 
             # extract the text and display it
             return render_template('upload.html',
