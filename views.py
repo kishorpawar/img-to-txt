@@ -89,8 +89,17 @@ def use_google_vision(content):
     print(content.filename)
     """Detects document features in an image."""
     from google.cloud import vision
-    import io
-    client = vision.ImageAnnotatorClient()
+    import io, os
+    from google.oauth2 import service_account
+    import json
+    credentials_raw = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+    print("CREDs ")
+    print(credentials_raw)
+    service_account_info = json.loads(credentials_raw)
+     
+    credentials = service_account.Credentials.from_service_account_info(
+    service_account_info)
+    client = vision.ImageAnnotatorClient(credentials=credentials)
 
     with io.open('static/media/{}'.format(content.filename), 'rb') as image_file:
         content = image_file.read()
