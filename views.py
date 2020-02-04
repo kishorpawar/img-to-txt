@@ -85,3 +85,65 @@ def get_text_from_api(filename):
     print("Extracted Text:" + str(jobj["OCRText"][0][0]))
     return ("Extracted Text:" + str(jobj["OCRText"][0][0]))
 
+def use_google_vision(content):
+    print(content.filename)
+    """Detects document features in an image."""
+    from google.cloud import vision
+    import io
+    client = vision.ImageAnnotatorClient()
+
+    with io.open('static/media/{}'.format(content.filename), 'rb') as image_file:
+        content = image_file.read()
+
+    image = vision.types.Image(content=content)
+
+    response = client.document_text_detection(image=image)
+
+    items = []
+    lines = {}
+
+    for text in response.text_annotations[1:]:
+        top_x_axis = text.bounding_poly.vertices[0].x
+        top_y_axis = text.bounding_poly.vertices[0].y
+        bottom_y_axis = text.bounding_poly.vertices[3].y
+    
+        if top_y_axis not in lines:
+            lines[top_y_axis] = [(top_y_axis, bottom_y_axis), []]
+    
+        for s_top_y_axis, s_item in lines.items():
+            if top_y_axis < s_item[0][1]:
+                lines[s_top_y_axis][1].append((top_x_axis, text.description))
+                break
+    
+    for _, item in lines.items():
+        if item[1]:
+            words = sorted(item[1], key=lambda t: t[0])
+            items.append((item[0], ' '.join([word for _, word in words]), words))
+        
+    print(items)
+    return " ".join([stri for _, stri, word in items])
+
+#    for page in response.full_text_annotation.pages:
+#        for block in page.blocks:
+#            #print('\nBlock confidence: {}\n'.format(block))
+#
+#            for paragraph in block.paragraphs:
+#            #    print('Paragraph confidence: {}'.format(
+#            #        paragraph))
+#
+#                for word in paragraph.words:
+#                    word_text = ''.join([
+#                        symbol.text for symbol in word.symbols
+#                    ])
+#                    print('Word text: {} (confidence: {})'.format(
+#                        word_text, word.confidence))
+#
+#                   # for symbol in word.symbols:
+#                   #     print('\tSymbol: {} (confidence: {})'.format(
+#                   #         symbol.text, symbol.confidence))
+#
+    if response.error.message:
+        raise Exception(
+            '{}\nFor more info on error messages, check: '
+            'https://cloud.google.com/apis/design/errors'.format(
+                response.error.message))
