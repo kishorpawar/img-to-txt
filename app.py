@@ -1,11 +1,12 @@
 import os
 from flask import Flask, render_template, request
-from views import get_attendence
+from views import get_attendence, get_text_from_api, use_google_vision
 
-MEDIA = '/static/media'
+MEDIA = 'static/media/'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = MEDIA
 
 # check the file extension
 def allowed_file(filename):
@@ -25,9 +26,12 @@ def upload_page():
             return render_template('upload.html', msg='No file selected')
 
         if file and allowed_file(file.filename):
+            file.save(MEDIA+file.filename)
 
             # call the OCR function on it
-            extracted_text = get_attendence(file)
+            #extracted_text = get_attendence(file)
+            #extracted_text = get_text_from_api(file)
+            extracted_text = use_google_vision(file)
 
             # extract the text and display it
             return render_template('upload.html',
