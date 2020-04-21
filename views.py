@@ -56,8 +56,8 @@ def get_text_from_api(filename):
 
 	!!!!  For getting result you must specify "gettext" or "outputformat" !!!!
     """
-    UserName = 'ANDYSTORRISH'
-    LicenseCode = '7F48FF17-6E19-40B6-82CC-127021E3A0E7'
+    UserName = ''
+    LicenseCode = ''
     
     # Extract text with English language by default
     RequestUrl = "http://www.ocrwebservice.com/restservices/processDocument?gettext=true&tobw=true";
