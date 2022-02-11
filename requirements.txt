@@ -17,7 +17,7 @@ numpy==1.16.6
 opencv-python==4.1.2.30
 Pillow==6.2.0
 pprint==0.1
-protobuf==3.11.2
+protobuf==3.15.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pytesseract==0.3.2
